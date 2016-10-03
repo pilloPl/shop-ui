@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet id="1" author="pilo">
+        <createSequence schemaName="public" sequenceName="items_seq"/>
+        <createTable tableName="items">
+            <column name="id" type="int8">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="items_pkey"/>
+            </column>
+            <column name="uuid" type="varchar(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="varchar(30)"/>
+            <column name="when_bought" type="TIMESTAMP"/>
+            <column name="when_paid" type="TIMESTAMP"/>
+            <column name="when_payment_timeout" type="TIMESTAMP"/>
+            <column name="when_payment_marked_as_missing" type="TIMESTAMP"/>
+        </createTable>
+        <createIndex indexName="idx_item_when_expires"
+                     tableName="items">
+            <column name="when_payment_timeout" />
+        </createIndex>
+    </changeSet>
+
+
+</databaseChangeLog>
