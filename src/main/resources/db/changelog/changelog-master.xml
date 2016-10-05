@@ -18,6 +18,7 @@
             <column name="when_ordered" type="TIMESTAMP"/>
             <column name="when_paid" type="TIMESTAMP"/>
             <column name="when_payment_timeout" type="TIMESTAMP"/>
+            <column name="amount" type="NUMERIC(19,2)"/>
             <column name="when_payment_marked_as_missing" type="TIMESTAMP"/>
         </createTable>
         <createIndex indexName="idx_item_when_expires"
