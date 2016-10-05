@@ -10,9 +10,9 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ItemBought implements Event {
+public class ItemOrdered implements Event {
 
-    public static final String TYPE = "item.bought";
+    public static final String TYPE = "item.ordered";
 
     private UUID uuid;
     private Instant when;

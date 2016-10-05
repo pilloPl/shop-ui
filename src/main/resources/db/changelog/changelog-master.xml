@@ -15,7 +15,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="status" type="varchar(30)"/>
-            <column name="when_bought" type="TIMESTAMP"/>
+            <column name="when_ordered" type="TIMESTAMP"/>
             <column name="when_paid" type="TIMESTAMP"/>
             <column name="when_payment_timeout" type="TIMESTAMP"/>
             <column name="when_payment_marked_as_missing" type="TIMESTAMP"/>

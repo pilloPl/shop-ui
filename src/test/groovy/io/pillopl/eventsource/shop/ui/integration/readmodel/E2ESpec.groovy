@@ -1,11 +1,11 @@
 package io.pillopl.eventsource.shop.ui.integration.readmodel
 
-import io.pillopl.eventsource.shop.ui.events.ItemBought
+import io.pillopl.eventsource.shop.ui.events.ItemOrdered
 import io.pillopl.eventsource.shop.ui.events.ItemPaid
 import io.pillopl.eventsource.shop.ui.events.ItemPaymentTimeout
 import io.pillopl.eventsource.shop.ui.integration.IntegrationSpec
 import io.pillopl.eventsource.shop.ui.readmodel.JdbcReadModel
-import io.pillopl.eventsource.shop.ui.readmodel.ShopItemDto
+import io.pillopl.eventsource.shop.ui.readmodel.ShopItem
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.stream.messaging.Sink
 import org.springframework.messaging.support.GenericMessage
@@ -27,42 +27,42 @@ class E2ESpec extends IntegrationSpec {
 
     @Autowired Sink sink
 
-    def 'should store new bought item'() {
+    def 'should store new ordered item'() {
         given:
             UUID itemUUID = UUID.randomUUID()
         when:
-            itemIsBought(itemUUID, ANY_TIME)
+            itemIsOrdered(itemUUID, ANY_TIME)
         then:
-            ShopItemDto item = readModel.getItemBy(itemUUID)
+            ShopItem item = readModel.getItemBy(itemUUID)
             item.uuid == itemUUID.toString()
-            item.status == 'BOUGHT'
-            item.when_bought.toInstant() == ANY_TIME
+            item.status == 'ORDERED'
+            item.when_ordered.toInstant() == ANY_TIME
             item.when_paid == null
             item.when_payment_timeout.toInstant() == ANY_TIME_LATER
             item.when_payment_marked_as_missing == null
     }
 
-    def 'buying should be idempotent on read side'() {
+    def 'ordering should be idempotent on read side'() {
         given:
             UUID itemUUID = UUID.randomUUID()
         when:
-            itemIsBought(itemUUID, ANY_TIME)
+            itemIsOrdered(itemUUID, ANY_TIME)
         and:
-            itemIsBought(itemUUID, ANY_OTHER_TIME)
+            itemIsOrdered(itemUUID, ANY_OTHER_TIME)
         then:
-            ShopItemDto item = readModel.getItemBy(itemUUID)
-            item.when_bought.toInstant() == ANY_TIME
+            ShopItem item = readModel.getItemBy(itemUUID)
+            item.when_ordered.toInstant() == ANY_TIME
     }
 
     def 'should update item as paid'() {
         given:
             UUID itemUUID = UUID.randomUUID()
         when:
-            itemIsBought(itemUUID, ANY_TIME)
+            itemIsOrdered(itemUUID, ANY_TIME)
         and:
             itemIsPaid(itemUUID, ANY_OTHER_TIME)
         then:
-            ShopItemDto item = readModel.getItemBy(itemUUID)
+            ShopItem item = readModel.getItemBy(itemUUID)
             item.when_paid.toInstant() == ANY_OTHER_TIME
     }
 
@@ -70,15 +70,15 @@ class E2ESpec extends IntegrationSpec {
         given:
             UUID itemUUID = UUID.randomUUID()
         when:
-            itemIsBought(itemUUID, ANY_TIME)
+            itemIsOrdered(itemUUID, ANY_TIME)
         and:
-            itemIsBought(itemUUID, ANY_TIME)
+            itemIsOrdered(itemUUID, ANY_TIME)
         and:
             itemIsPaid(itemUUID, ANY_OTHER_TIME)
         and:
             itemIsPaid(itemUUID, YET_ANOTHER_TIME)
         then:
-            ShopItemDto item = readModel.getItemBy(itemUUID)
+            ShopItem item = readModel.getItemBy(itemUUID)
             item.when_paid.toInstant() == ANY_OTHER_TIME
     }
 
@@ -86,11 +86,11 @@ class E2ESpec extends IntegrationSpec {
         given:
             UUID itemUUID = UUID.randomUUID()
         when:
-            itemIsBought(itemUUID, ANY_TIME)
+            itemIsOrdered(itemUUID, ANY_TIME)
         and:
             itemMarkedAsMissingPayment(itemUUID, ANY_OTHER_TIME)
         then:
-            ShopItemDto item = readModel.getItemBy(itemUUID)
+            ShopItem item = readModel.getItemBy(itemUUID)
             item.when_payment_marked_as_missing.toInstant() == ANY_OTHER_TIME
     }
 
@@ -98,18 +98,18 @@ class E2ESpec extends IntegrationSpec {
         given:
             UUID itemUUID = UUID.randomUUID()
         when:
-            itemIsBought(itemUUID, ANY_TIME)
+            itemIsOrdered(itemUUID, ANY_TIME)
         and:
             itemMarkedAsMissingPayment(itemUUID, ANY_OTHER_TIME)
         and:
             itemMarkedAsMissingPayment(itemUUID, YET_ANOTHER_TIME)
         then:
-            ShopItemDto item = readModel.getItemBy(itemUUID)
+            ShopItem item = readModel.getItemBy(itemUUID)
             item.when_payment_marked_as_missing.toInstant() == ANY_OTHER_TIME
     }
 
-    void itemIsBought(UUID uuid, Instant when, Instant paymentTimeout = ANY_TIME_LATER) {
-        sink.input().send(new GenericMessage<>(new ItemBought(uuid, when, paymentTimeout)))
+    void itemIsOrdered(UUID uuid, Instant when, Instant paymentTimeout = ANY_TIME_LATER) {
+        sink.input().send(new GenericMessage<>(new ItemOrdered(uuid, when, paymentTimeout)))
     }
 
     void itemIsPaid(UUID uuid, Instant when) {

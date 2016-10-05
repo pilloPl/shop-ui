@@ -1,7 +1,7 @@
 package io.pillopl.eventsource.shop.ui.readmodel;
 
 import io.pillopl.eventsource.shop.ui.events.Event;
-import io.pillopl.eventsource.shop.ui.events.ItemBought;
+import io.pillopl.eventsource.shop.ui.events.ItemOrdered;
 import io.pillopl.eventsource.shop.ui.events.ItemPaid;
 import io.pillopl.eventsource.shop.ui.events.ItemPaymentTimeout;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +18,9 @@ public class ReadModelUpdater {
     }
 
     public void handle(Event event) {
-        if (event instanceof ItemBought) {
-            final ItemBought itemBought = (ItemBought) event;
-            jdbcReadModelUpdater.updateOrCreateItemAsBought(event.uuid(), event.when(), itemBought.getPaymentTimeoutDate());
+        if (event instanceof ItemOrdered) {
+            final ItemOrdered itemOrdered = (ItemOrdered) event;
+            jdbcReadModelUpdater.updateOrCreateItemAsOrdered(event.uuid(), event.when(), itemOrdered.getPaymentTimeoutDate());
         } else if (event instanceof ItemPaid) {
             jdbcReadModelUpdater.updateItemAsPaid(event.uuid(), event.when());
         } else if (event instanceof ItemPaymentTimeout) {

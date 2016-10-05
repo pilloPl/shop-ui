@@ -1,6 +1,6 @@
 package io.pillopl.eventsource.shop.ui.readmodel
 
-import io.pillopl.eventsource.shop.ui.events.ItemBought
+import io.pillopl.eventsource.shop.ui.events.ItemOrdered
 import io.pillopl.eventsource.shop.ui.events.ItemPaymentTimeout
 import io.pillopl.eventsource.shop.ui.events.ItemPaid
 import spock.lang.Specification
@@ -22,11 +22,11 @@ class ReadModelPopulatorSpec extends Specification {
     @Subject
     ReadModelUpdater readModelUpdater = new ReadModelUpdater(jdbcReadModel)
 
-    def 'should update or create bought item when receiving bought item event'() {
+    def 'should update or create ordered item when receiving bought item event'() {
         when:
-            readModelUpdater.handle(new ItemBought(ANY_UUID, ANY_DATE, ANY_PAYMENT_TIMEOUT))
+            readModelUpdater.handle(new ItemOrdered(ANY_UUID, ANY_DATE, ANY_PAYMENT_TIMEOUT))
         then:
-            1 * jdbcReadModel.updateOrCreateItemAsBought(ANY_UUID, ANY_DATE, ANY_PAYMENT_TIMEOUT)
+            1 * jdbcReadModel.updateOrCreateItemAsOrdered(ANY_UUID, ANY_DATE, ANY_PAYMENT_TIMEOUT)
     }
 
     def 'should update item when receiving item paid event'() {
