@@ -13,7 +13,15 @@ import java.util.Map;
 @RestController
 public class ProjectionController {
 
-    private static final String SELECT_WHOLE_PROJECTION = "select * from items order by when_ordered";
+    private static final String SELECT_WHOLE_PROJECTION =
+            "select " +
+            "uuid," +
+            "status," +
+            "when_ordered," +
+            "when_paid," +
+            "when_payment_timeout," +
+            "when_payment_marked_as_missing " +
+            "from items order by when_ordered";
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
