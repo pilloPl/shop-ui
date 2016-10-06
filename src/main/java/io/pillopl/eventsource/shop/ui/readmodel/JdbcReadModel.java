@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -18,8 +19,8 @@ class JdbcReadModel {
 
     private static final String INSERT_ORDERED_ITEM_SQL =
             "INSERT INTO items " +
-                    "(id, uuid, status, when_ordered, when_paid, when_payment_timeout, when_payment_marked_as_missing)" +
-                    " VALUES (items_seq.nextval, ?, 'ORDERED', ?, NULL, ?, NULL)";
+                    "(id, uuid, status, when_ordered, when_paid, when_payment_timeout, when_payment_marked_as_missing, price)" +
+                    " VALUES (items_seq.nextval, ?, 'ORDERED', ?, NULL, ?, NULL, ?)";
 
     private static final String UPDATE_PAID_ITEM_SQL
             = "UPDATE items SET when_paid = ?, status = 'PAID' WHERE when_paid IS NULL AND uuid = ?";
@@ -37,10 +38,10 @@ class JdbcReadModel {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    void updateOrCreateItemAsOrdered(UUID uuid, Instant when, Instant paymentTimeoutDate) {
+    void updateOrCreateItemAsOrdered(UUID uuid, Instant when, Instant paymentTimeoutDate, BigDecimal price) {
         final int affectedRows = jdbcTemplate.update(UPDATE_ORDERED_ITEM_SQL, from(paymentTimeoutDate), uuid);
         if (affectedRows == 0) {
-            jdbcTemplate.update(INSERT_ORDERED_ITEM_SQL, uuid, from(when), from(paymentTimeoutDate));
+            jdbcTemplate.update(INSERT_ORDERED_ITEM_SQL, uuid, from(when), from(paymentTimeoutDate), price);
         }
     }
 

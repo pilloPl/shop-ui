@@ -26,7 +26,7 @@ class ReadModelPopulatorSpec extends Specification {
         when:
             readModelUpdater.handle(new ItemOrdered(ANY_UUID, ANY_DATE, ANY_PAYMENT_TIMEOUT))
         then:
-            1 * jdbcReadModel.updateOrCreateItemAsOrdered(ANY_UUID, ANY_DATE, ANY_PAYMENT_TIMEOUT)
+            1 * jdbcReadModel.updateOrCreateItemAsOrdered(ANY_UUID, ANY_DATE, ANY_PAYMENT_TIMEOUT, itemOrdered.getPrice())
     }
 
     def 'should update item when receiving item paid event'() {

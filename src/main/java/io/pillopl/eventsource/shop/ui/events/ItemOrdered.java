@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -17,6 +18,8 @@ public class ItemOrdered implements Event {
     private UUID uuid;
     private Instant when;
     private Instant paymentTimeoutDate;
+    private BigDecimal price;
+
 
     @Override
     public String type() {

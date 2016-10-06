@@ -20,7 +20,7 @@ public class ReadModelUpdater {
     public void handle(Event event) {
         if (event instanceof ItemOrdered) {
             final ItemOrdered itemOrdered = (ItemOrdered) event;
-            jdbcReadModelUpdater.updateOrCreateItemAsOrdered(event.uuid(), event.when(), itemOrdered.getPaymentTimeoutDate());
+            jdbcReadModelUpdater.updateOrCreateItemAsOrdered(event.uuid(), event.when(), itemOrdered.getPaymentTimeoutDate(), itemOrdered.getPrice());
         } else if (event instanceof ItemPaid) {
             jdbcReadModelUpdater.updateItemAsPaid(event.uuid(), event.when());
         } else if (event instanceof ItemPaymentTimeout) {

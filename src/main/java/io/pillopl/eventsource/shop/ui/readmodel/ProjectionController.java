@@ -15,7 +15,8 @@ public class ProjectionController {
 
     private static final String SELECT_WHOLE_PROJECTION =
             "select " +
-            "uuid," +
+                    "price," +
+                    "uuid," +
             "status," +
             "when_ordered," +
             "when_paid," +
