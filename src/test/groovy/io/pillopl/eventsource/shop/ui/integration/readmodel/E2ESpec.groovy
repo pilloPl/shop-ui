@@ -1,8 +1,5 @@
 package io.pillopl.eventsource.shop.ui.integration.readmodel
 
-import io.pillopl.eventsource.shop.ui.events.ItemOrdered
-import io.pillopl.eventsource.shop.ui.events.ItemPaid
-import io.pillopl.eventsource.shop.ui.events.ItemPaymentTimeout
 import io.pillopl.eventsource.shop.ui.integration.IntegrationSpec
 import io.pillopl.eventsource.shop.ui.readmodel.JdbcReadModel
 import io.pillopl.eventsource.shop.ui.readmodel.ShopItem
@@ -109,15 +106,28 @@ class E2ESpec extends IntegrationSpec {
     }
 
     void itemIsOrdered(UUID uuid, Instant when, Instant paymentTimeout = ANY_TIME_LATER) {
-        sink.input().send(new GenericMessage<>(new ItemOrdered(uuid, when, paymentTimeout)))
+        sink.input().send(new GenericMessage<>(
+                itemOrderedInJson(uuid, when, paymentTimeout)))
     }
 
     void itemIsPaid(UUID uuid, Instant when) {
-        sink.input().send(new GenericMessage<>(new ItemPaid(uuid, when)))
+        sink.input().send(new GenericMessage<>(itemPaidInJson(uuid, when)))
     }
 
     void itemMarkedAsMissingPayment(UUID uuid, Instant when) {
-        sink.input().send(new GenericMessage<>(new ItemPaymentTimeout(uuid, when)))
+        sink.input().send(new GenericMessage<>(itemTimeoutInJson(uuid, when)))
+    }
+
+    private static String itemOrderedInJson(UUID uuid, Instant when, Instant paymentTimeout) {
+        return "{\"type\":\"item.ordered\",\"uuid\":\"$uuid\",\"when\":\"$when\",\"paymentTimeoutDate\":\"$paymentTimeout\"}"
+    }
+
+    private static String itemPaidInJson(UUID uuid, Instant when) {
+        return "{\"type\":\"item.paid\",\"uuid\":\"$uuid\",\"when\":\"$when\"}"
+    }
+
+    private static String itemTimeoutInJson(UUID uuid, Instant when) {
+        return "{\"type\":\"item.payment.timeout\",\"uuid\":\"$uuid\",\"when\":\"$when\"}"
     }
 
 }
