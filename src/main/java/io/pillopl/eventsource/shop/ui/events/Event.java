@@ -20,5 +20,6 @@ public interface Event {
     String type();
     Instant when();
     UUID uuid();
+    Integer version();
 }
 

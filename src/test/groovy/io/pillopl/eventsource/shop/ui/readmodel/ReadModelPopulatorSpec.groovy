@@ -24,22 +24,27 @@ class ReadModelPopulatorSpec extends Specification {
 
     def 'should update or create ordered item when receiving bought item event'() {
         when:
-            readModelUpdater.handle(new ItemOrdered(ANY_UUID, ANY_DATE, ANY_PAYMENT_TIMEOUT))
+            readModelUpdater.handle(new ItemOrdered(ANY_UUID, ANY_DATE, ANY_PAYMENT_TIMEOUT, 10, 1))
         then:
-            1 * jdbcReadModel.updateOrCreateItemAsOrdered(ANY_UUID, ANY_DATE, ANY_PAYMENT_TIMEOUT)
+            1 * jdbcReadModel.updateOrCreateItemAsOrdered(ANY_UUID, ANY_DATE, ANY_PAYMENT_TIMEOUT, 10)
+            1 * jdbcReadModel.updateVersionAndLastModifiedDate(ANY_UUID, 1, ANY_DATE)
     }
 
     def 'should update item when receiving item paid event'() {
         when:
-            readModelUpdater.handle(new ItemPaid(ANY_UUID, ANY_DATE))
+            readModelUpdater.handle(new ItemPaid(ANY_UUID, ANY_DATE, 1))
         then:
             1 * jdbcReadModel.updateItemAsPaid(ANY_UUID, ANY_DATE)
+            1 * jdbcReadModel.updateVersionAndLastModifiedDate(ANY_UUID, 1, ANY_DATE)
+
     }
 
     def 'should update item when receiving payment timeout event'() {
         when:
-            readModelUpdater.handle(new ItemPaymentTimeout(ANY_UUID, ANY_DATE))
+            readModelUpdater.handle(new ItemPaymentTimeout(ANY_UUID, ANY_DATE, 1))
         then:
             1 * jdbcReadModel.updateItemAsPaymentMissing(ANY_UUID, ANY_DATE)
+            1 * jdbcReadModel.updateVersionAndLastModifiedDate(ANY_UUID, 1, ANY_DATE)
+
     }
 }

@@ -16,7 +16,12 @@ public class ItemPaid implements Event {
 
     private UUID uuid;
     private Instant when;
+    private Integer version;
 
+    @Override
+    public Integer version() {
+        return version;
+    }
     @Override
     public String type() {
         return TYPE;

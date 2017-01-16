@@ -6,6 +6,7 @@ import io.pillopl.eventsource.shop.ui.events.ItemPaid;
 import io.pillopl.eventsource.shop.ui.events.ItemPaymentTimeout;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class ReadModelUpdater {
@@ -17,10 +18,12 @@ public class ReadModelUpdater {
         this.jdbcReadModelUpdater = jdbcReadModelUpdater;
     }
 
+    @Transactional
     public void handle(Event event) {
         if (event instanceof ItemOrdered) {
             final ItemOrdered itemOrdered = (ItemOrdered) event;
-            jdbcReadModelUpdater.updateOrCreateItemAsOrdered(event.uuid(), event.when(), itemOrdered.getPaymentTimeoutDate());
+            jdbcReadModelUpdater.updateOrCreateItemAsOrdered(event.uuid(), event.when(),
+                    itemOrdered.getPaymentTimeoutDate(), itemOrdered.getPrice());
         } else if (event instanceof ItemPaid) {
             jdbcReadModelUpdater.updateItemAsPaid(event.uuid(), event.when());
         } else if (event instanceof ItemPaymentTimeout) {
@@ -28,6 +31,8 @@ public class ReadModelUpdater {
         } else {
             throw new IllegalArgumentException("Cannot handle event " + event.getClass());
         }
+
+        jdbcReadModelUpdater.updateVersionAndLastModifiedDate(event.uuid(), event.version(), event.when());
     }
 
 }

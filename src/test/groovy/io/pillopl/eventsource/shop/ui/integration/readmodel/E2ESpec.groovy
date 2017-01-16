@@ -24,6 +24,7 @@ class E2ESpec extends IntegrationSpec {
 
     @Autowired Sink sink
 
+
     def 'should store new ordered item'() {
         given:
             UUID itemUUID = UUID.randomUUID()

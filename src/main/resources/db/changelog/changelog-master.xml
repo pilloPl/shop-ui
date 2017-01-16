@@ -20,12 +20,14 @@
             <column name="when_payment_timeout" type="TIMESTAMP"/>
             <column name="when_payment_marked_as_missing" type="TIMESTAMP"/>
             <column name="price" type="NUMERIC(19,2)"/>
+            <column name="version_value" type="NUMERIC(19,2)"/>
+            <column name="last_modified" type="TIMESTAMP"/>
+
         </createTable>
         <createIndex indexName="idx_item_when_expires"
                      tableName="items">
             <column name="when_payment_timeout" />
         </createIndex>
     </changeSet>
-
 
 </databaseChangeLog>
