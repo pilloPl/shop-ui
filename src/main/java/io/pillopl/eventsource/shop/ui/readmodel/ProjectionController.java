@@ -18,6 +18,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.springframework.http.HttpHeaders.EXPECT;
+
 
 @RestController
 @Slf4j
@@ -39,7 +41,7 @@ public class ProjectionController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{uuid}")
-    public ResponseEntity<ShopItem> readById(@PathVariable String uuid, @RequestHeader(value="Expect") Integer expectedVersion) {
+    public ResponseEntity<ShopItem> readById(@PathVariable String uuid, @RequestHeader(value= EXPECT) Integer expectedVersion) {
         final ShopItem item = jdbcReadModel.getItemBy(UUID.fromString(uuid));
         if (dataAtExpectedState(item, expectedVersion)) {
             return okWithLastModifiedDate(item);
